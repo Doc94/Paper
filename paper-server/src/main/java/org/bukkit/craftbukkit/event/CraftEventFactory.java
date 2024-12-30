@@ -2185,6 +2185,8 @@ public class CraftEventFactory {
             event = new ExplodeEvent(block, blockState, location, blockList, serverExplosion.yield, explosionResult);
         }
 
+        event.callEvent();
+
         return event;
     }
 
