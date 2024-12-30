@@ -9,7 +9,7 @@ java {
     withJavadocJar()
 }
 
-val annotationsVersion = "24.1.0"
+val annotationsVersion = "26.0.1"
 val bungeeCordChatVersion = "1.20-R0.2"
 val adventureVersion = "4.18.0"
 val slf4jVersion = "2.0.9"
@@ -67,9 +67,6 @@ dependencies {
     apiAndDocs("net.kyori:adventure-text-serializer-legacy")
     apiAndDocs("net.kyori:adventure-text-serializer-plain")
     apiAndDocs("net.kyori:adventure-text-logger-slf4j")
-
-    implementation("org.ow2.asm:asm:9.7.1")
-    implementation("org.ow2.asm:asm-commons:9.7.1")
 
     api("org.apache.maven:maven-resolver-provider:3.9.6") // make API dependency for Paper Plugins
     compileOnly("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.18")
