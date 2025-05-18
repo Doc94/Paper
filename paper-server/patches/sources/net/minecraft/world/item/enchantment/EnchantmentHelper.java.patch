@@ -1,17 +1,31 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -52,8 +_,14 @@
+@@ -47,13 +_,26 @@
+ 
+ public class EnchantmentHelper {
+     public static int getItemEnchantmentLevel(Holder<Enchantment> enchantment, ItemStack stack) {
+-        ItemEnchantments itemEnchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
++    // Paper start - allow setting the DataComponents to use
++        return getItemEnchantmentLevel(enchantment, stack, DataComponents.ENCHANTMENTS);
++    }
++
++    public static int getItemEnchantmentLevel(Holder<Enchantment> enchantment, ItemStack stack, @Nullable final DataComponentType<ItemEnchantments> componentTypeOverride) {
++    // Paper end - allow setting the DataComponents to use
++        DataComponentType<ItemEnchantments> componentType = (componentTypeOverride != null) ? componentTypeOverride : getComponentType(stack); // Paper - allowing get enchantments level on a specific component
++        ItemEnchantments itemEnchantments = stack.getOrDefault(componentType, ItemEnchantments.EMPTY); // Paper
+         return itemEnchantments.getLevel(enchantment);
      }
  
      public static ItemEnchantments updateEnchantments(ItemStack stack, Consumer<ItemEnchantments.Mutable> updater) {
+-        DataComponentType<ItemEnchantments> componentType = getComponentType(stack);
+-        ItemEnchantments itemEnchantments = stack.get(componentType);
 +    // Paper start - allowing updating enchantments on items without component
-+        return updateEnchantments(stack, updater, false);
++        return updateEnchantments(stack, updater, null, false);
 +    }
 +
-+    public static ItemEnchantments updateEnchantments(ItemStack stack, Consumer<ItemEnchantments.Mutable> updater, final boolean createComponentIfMissing) {
++    public static ItemEnchantments updateEnchantments(ItemStack stack, Consumer<ItemEnchantments.Mutable> updater, @Nullable final DataComponentType<ItemEnchantments> componentTypeOverride, final boolean createComponentIfMissing) {
 +    // Paper end - allowing updating enchantments on items without component
-         DataComponentType<ItemEnchantments> componentType = getComponentType(stack);
--        ItemEnchantments itemEnchantments = stack.get(componentType);
++        DataComponentType<ItemEnchantments> componentType = (componentTypeOverride != null) ? componentTypeOverride : getComponentType(stack); // Paper - allowing updating enchantments on a specific component
 +        ItemEnchantments itemEnchantments = createComponentIfMissing ? stack.getOrDefault(componentType, ItemEnchantments.EMPTY) : stack.get(componentType); // Paper - allowing updating enchantments on items without component
          if (itemEnchantments == null) {
              return ItemEnchantments.EMPTY;

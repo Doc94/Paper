@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import io.papermc.paper.adventure.PaperAdventure;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import net.kyori.adventure.text.Component;
@@ -274,7 +274,7 @@ public final class CraftItemStack extends ItemStack {
 
         EnchantmentHelper.updateEnchantments(this.handle, mutable -> { // data component api doesn't really support mutable things once already set yet
             mutable.set(CraftEnchantment.bukkitToMinecraftHolder(enchant), level);
-        }, true);
+        }, DataComponents.ENCHANTMENTS, true);
     }
 
     @Override
@@ -299,22 +299,15 @@ public final class CraftItemStack extends ItemStack {
             return 0;
         }
 
-        ItemEnchantments itemEnchantments = this.handle.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        if (itemEnchantments.isEmpty()) {
-            return 0;
-        }
-
         Holder<net.minecraft.world.item.enchantment.Enchantment> removedEnchantment = CraftEnchantment.bukkitToMinecraftHolder(enchant);
-        if (itemEnchantments.keySet().contains(removedEnchantment)) {
-            int previousLevel = itemEnchantments.getLevel(removedEnchantment);
+        final AtomicInteger previousLevel = new AtomicInteger();
 
-            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments); // data component api doesn't really support mutable things once already set yet
-            mutable.removeIf(enchantment -> enchantment.equals(removedEnchantment));
-            this.handle.set(DataComponents.ENCHANTMENTS, mutable.toImmutable());
-            return previousLevel;
-        }
+        EnchantmentHelper.updateEnchantments(this.handle, mutable -> {
+            previousLevel.set(mutable.getLevel(removedEnchantment));
+            mutable.removeIf(enchantment -> enchantment.equals(CraftEnchantment.bukkitToMinecraftHolder(enchant)));
+        });
 
-        return 0;
+        return previousLevel.get();
     }
 
     @Override
