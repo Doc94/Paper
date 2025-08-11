@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import io.papermc.paper.entity.Frictional;
 import io.papermc.paper.world.damagesource.CombatTracker;
-import io.papermc.paper.world.damagesource.FallLocationType;
+import io.papermc.paper.world.waypoint.WaypointTransmitter;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a living entity, such as a monster or player
  */
-public interface LivingEntity extends Attributable, Damageable, ProjectileSource, io.papermc.paper.entity.Frictional { // Paper
+public interface LivingEntity extends Attributable, Damageable, ProjectileSource, Frictional, WaypointTransmitter {
 
     /**
      * Gets the height of the living entity's eyes above its Location.
