@@ -55,7 +55,6 @@ import net.kyori.adventure.pointer.PointersSupplier;
 import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
@@ -1311,11 +1310,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
         if (this.getHandle().connection == null) {
             return false;
         }
+
         // Minecraft does not currently support teleporting players between worlds with passengers.
         // It causes them to be dismounted, and causes weird behavior.
         if (location.getWorld() != this.getWorld() && !this.getHandle().passengers.isEmpty()) {
             return false;
         }
+
+        this.getHandle().setCamera(this.getHandle()); // THIS
 
         return super.teleport0(location, cause, flags);
     }
